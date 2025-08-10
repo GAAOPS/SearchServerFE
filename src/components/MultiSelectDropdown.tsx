@@ -38,7 +38,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     onChange(newValues);
   };
 
-  const handleRemoveOption = (value: string, e: React.MouseEvent) => {
+  const handleRemoveValue = (value: string, e: React.MouseEvent) => {
     e.stopPropagation();
     onChange(selectedValues.filter(v => v !== value));
   };
@@ -53,75 +53,62 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         {label}
       </label>
       
-      <button
-        type="button"
+      <div
+        className="relative w-full cursor-pointer bg-white border border-gray-300 rounded-lg px-3 py-2 text-left shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
         onClick={() => setIsOpen(!isOpen)}
-        className="filter-button w-full flex items-center justify-between text-left"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
       >
-        <span className={selectedValues.length > 0 ? 'text-gray-900' : 'text-gray-500'}>
-          {displayText}
-        </span>
-        <ChevronDownIcon 
-          className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`} 
-        />
-      </button>
-
-      {selectedValues.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {selectedValues.map(value => (
-            <span
-              key={value}
-              className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary-100 text-primary-800"
-            >
-              {value}
-              <button
-                type="button"
-                onClick={(e) => handleRemoveOption(value, e)}
-                className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:bg-primary-200"
-              >
-                <XMarkIcon className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {isOpen && (
-        <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg dropdown-shadow max-h-60 overflow-auto">
-          {options.length === 0 ? (
-            <div className="px-4 py-3 text-sm text-gray-500">No options available</div>
-          ) : (
-            <ul role="listbox" className="py-1">
-              {options.map((option) => (
-                <li key={option.value} role="option">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-1">
+            {selectedValues.length > 0 ? (
+              selectedValues.map(value => (
+                <span
+                  key={value}
+                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary-100 text-primary-800"
+                >
+                  {value}
                   <button
                     type="button"
-                    onClick={() => handleToggleOption(option.value)}
-                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none flex items-center justify-between ${
-                      selectedValues.includes(option.value) ? 'bg-primary-50 text-primary-900' : 'text-gray-900'
-                    }`}
+                    className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200"
+                    onClick={(e) => handleRemoveValue(value, e)}
                   >
-                    <span className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedValues.includes(option.value)}
-                        onChange={() => {}} // Handled by button click
-                        className="mr-3 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                      />
-                      {option.value}
-                    </span>
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                      {option.count}
-                    </span>
+                    <XMarkIcon className="w-3 h-3" />
                   </button>
-                </li>
-              ))}
-            </ul>
-          )}
+                </span>
+              ))
+            ) : (
+              <span className="text-gray-500">{displayText}</span>
+            )}
+          </div>
+          <ChevronDownIcon 
+            className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          />
+        </div>
+      </div>
+
+      {isOpen && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+          {options.map(option => (
+            <div
+              key={option.value}
+              className={`px-3 py-2 cursor-pointer hover:bg-gray-50 flex items-center justify-between ${
+                selectedValues.includes(option.value) ? 'bg-primary-50 text-primary-700' : 'text-gray-900'
+              }`}
+              onClick={() => handleToggleOption(option.value)}
+            >
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={selectedValues.includes(option.value)}
+                  onChange={() => {}}
+                  className="mr-3 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                />
+                <span className="text-sm">{option.value}</span>
+              </div>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                {option.count}
+              </span>
+            </div>
+          ))}
         </div>
       )}
     </div>

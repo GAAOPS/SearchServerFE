@@ -8,6 +8,19 @@ export interface SearchRequest {
   includeFacets: boolean;
 }
 
+export interface FacetItem {
+  value: string;
+  count: number;
+  label: string;
+}
+
+export interface Facets {
+  activities: FacetItem[];
+  locations: FacetItem[];
+  entryLevels: FacetItem[];
+  workingTimes: FacetItem[];
+}
+
 export interface JobResult {
   id: string;
   title: string;
@@ -41,19 +54,6 @@ export interface SearchInfo {
     entryLevels: string[] | null;
     workingTimes: string[] | null;
   };
-}
-
-export interface FacetItem {
-  value: string;
-  count: number;
-  label: string;
-}
-
-export interface Facets {
-  activities: FacetItem[];
-  locations: FacetItem[];
-  entryLevels: FacetItem[];
-  workingTimes: FacetItem[];
 }
 
 export interface SearchResponse {

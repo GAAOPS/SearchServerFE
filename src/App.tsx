@@ -6,24 +6,24 @@ import { SearchRequest, SearchResponse } from './types/search';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activities, setActivities] = useState<string[]>([]);
-  const [locations, setLocations] = useState<string[]>([]);
-  const [entryLevels, setEntryLevels] = useState<string[]>([]);
-  const [workingTimes, setWorkingTimes] = useState<string[]>([]);
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedEntryLevels, setSelectedEntryLevels] = useState<string[]>([]);
+  const [selectedWorkingTimes, setSelectedWorkingTimes] = useState<string[]>([]);
   const [searchResponse, setSearchResponse] = useState<SearchResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const performSearch = useCallback(async () => {
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
 
     const request: SearchRequest = {
       searchTerm,
-      activities,
-      locations,
-      entryLevels,
-      workingTimes,
+      activities: selectedActivities,
+      locations: selectedLocations,
+      entryLevels: selectedEntryLevels,
+      workingTimes: selectedWorkingTimes,
       page: 1,
       includeFacets: true
     };
@@ -35,19 +35,23 @@ function App() {
       setError(err instanceof Error ? err.message : 'An error occurred while searching');
       setSearchResponse(null);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [searchTerm, activities, locations, entryLevels, workingTimes]);
+  }, [searchTerm, selectedActivities, selectedLocations, selectedEntryLevels, selectedWorkingTimes]);
 
   // Initial search on component mount
   useEffect(() => {
     performSearch();
   }, []);
 
-  // Auto-search when filters change (but not search term)
+  // Search when filters change (but not search term)
   useEffect(() => {
     performSearch();
-  }, [activities, locations, entryLevels, workingTimes]);
+  }, [selectedActivities, selectedLocations, selectedEntryLevels, selectedWorkingTimes]);
+
+  const handleSearchSubmit = () => {
+    performSearch();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,10 +60,8 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Job Search</h1>
-              <p className="mt-1 text-sm text-gray-600">
-                Find your perfect career opportunity
-              </p>
+              <h1 className="text-2xl font-bold text-gray-900">Job Search Portal</h1>
+              <p className="text-sm text-gray-600 mt-1">Find your perfect career opportunity</p>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">
@@ -74,33 +76,42 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <SearchFilters
-          searchTerm={searchTerm}
-          onSearchTermChange={setSearchTerm}
-          activities={activities}
-          onActivitiesChange={setActivities}
-          locations={locations}
-          onLocationsChange={setLocations}
-          entryLevels={entryLevels}
-          onEntryLevelsChange={setEntryLevels}
-          workingTimes={workingTimes}
-          onWorkingTimesChange={setWorkingTimes}
-          facets={searchResponse?.facets || null}
-          onSearch={performSearch}
-        />
+        <div className="space-y-8">
+          {/* Search Filters */}
+          <SearchFilters
+            searchTerm={searchTerm}
+            onSearchTermChange={setSearchTerm}
+            onSearchSubmit={handleSearchSubmit}
+            facets={searchResponse?.facets || {
+              activities: [],
+              locations: [],
+              entryLevels: [],
+              workingTimes: []
+            }}
+            selectedActivities={selectedActivities}
+            selectedLocations={selectedLocations}
+            selectedEntryLevels={selectedEntryLevels}
+            selectedWorkingTimes={selectedWorkingTimes}
+            onActivitiesChange={setSelectedActivities}
+            onLocationsChange={setSelectedLocations}
+            onEntryLevelsChange={setSelectedEntryLevels}
+            onWorkingTimesChange={setSelectedWorkingTimes}
+          />
 
-        <SearchResults
-          searchResponse={searchResponse}
-          loading={loading}
-          error={error}
-        />
+          {/* Search Results */}
+          <SearchResults
+            searchResponse={searchResponse}
+            isLoading={isLoading}
+            error={error}
+          />
+        </div>
       </main>
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-sm text-gray-500">
-            <p>© 2025 Job Search Application. Built with React and TypeScript.</p>
+            <p>&copy; 2025 Job Search Portal. Built with React and TypeScript.</p>
           </div>
         </div>
       </footer>

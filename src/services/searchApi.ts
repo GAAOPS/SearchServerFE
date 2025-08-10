@@ -1,6 +1,6 @@
 import { SearchRequest, SearchResponse } from '../types/search';
 
-// Mock data for demonstration - replace with actual API call
+// Mock data for demonstration
 const mockResponse: SearchResponse = {
   results: [
     {
@@ -30,20 +30,6 @@ const mockResponse: SearchResponse = {
       entryLevelsValues: ["Berufserfahrung"],
       workingTimesText: "Arbeitszeit",
       workingTimesValues: ["Vollzeit"]
-    },
-    {
-      id: "b2c3d4e5-f6g7-8901-2345-678901bcdefg",
-      title: "Marketing Manager (m/w/d) Digital",
-      url: "https://karriere.example.com/job?id=b2c3d4e5-f6g7-8901-2345-678901bcdefg",
-      lastUpdated: "2025-08-07T10:15:00Z",
-      locationText: "Standort",
-      locationValues: ["Leipzig"],
-      activitiesText: "Tätigkeitsbereich",
-      activitiesValues: ["Marketing und Kommunikation"],
-      entryLevelsText: "Einstiegslevel",
-      entryLevelsValues: ["Berufseinstieg", "Berufserfahrung"],
-      workingTimesText: "Arbeitszeit",
-      workingTimesValues: ["Vollzeit", "Teilzeit"]
     }
   ],
   pagination: {
@@ -70,7 +56,6 @@ const mockResponse: SearchResponse = {
       { value: "Kundenbetreuung", count: 4, label: "Activities" },
       { value: "Marketing und Kommunikation", count: 4, label: "Activities" },
       { value: "Personal und Qualifizierung", count: 3, label: "Activities" },
-      { value: "Prozess- und Projektmanagement", count: 2, label: "Activities" },
       { value: "Software Development", count: 2, label: "Activities" }
     ],
     locations: [
@@ -78,8 +63,7 @@ const mockResponse: SearchResponse = {
       { value: "Köln", count: 2, label: "Locations" },
       { value: "Leipzig", count: 2, label: "Locations" },
       { value: "Bonn", count: 1, label: "Locations" },
-      { value: "Remote", count: 1, label: "Locations" },
-      { value: "Essen", count: 1, label: "Locations" }
+      { value: "Remote", count: 1, label: "Locations" }
     ],
     entryLevels: [
       { value: "Berufseinstieg", count: 6, label: "Entry Levels" },
@@ -96,7 +80,7 @@ const mockResponse: SearchResponse = {
 
 export const searchJobs = async (request: SearchRequest): Promise<SearchResponse> => {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
+  await new Promise(resolve => setTimeout(resolve, 500));
   
   // TODO: Replace with actual API call
   // const response = await fetch('YOUR_API_ENDPOINT', {
@@ -117,27 +101,15 @@ export const searchJobs = async (request: SearchRequest): Promise<SearchResponse
     );
   }
   
-  if (request.activities.length > 0) {
-    filteredResults = filteredResults.filter(job =>
-      job.activitiesValues.some(activity => request.activities.includes(activity))
-    );
-  }
-  
   if (request.locations.length > 0) {
     filteredResults = filteredResults.filter(job =>
-      job.locationValues.some(location => request.locations.includes(location))
+      job.locationValues.some(loc => request.locations.includes(loc))
     );
   }
   
-  if (request.entryLevels.length > 0) {
+  if (request.activities.length > 0) {
     filteredResults = filteredResults.filter(job =>
-      job.entryLevelsValues.some(level => request.entryLevels.includes(level))
-    );
-  }
-  
-  if (request.workingTimes.length > 0) {
-    filteredResults = filteredResults.filter(job =>
-      job.workingTimesValues.some(time => request.workingTimes.includes(time))
+      job.activitiesValues.some(act => request.activities.includes(act))
     );
   }
   
